@@ -1,0 +1,260 @@
+/* eDoctorUG Dashboard — design tokens
+   Palette chosen for a back-office fintech/health-payments tool: deep teal
+   (trust, clinical) as the brand/primary colour, warm amber strictly for
+   "needs attention" states, muted brick for failure. Paper background,
+   not the generic cream. No card-shadow kit — structure comes from
+   hairline dividers and a fixed dark sidebar. */
+
+:root {
+  --bg: #f5f6f2;
+  --surface: #ffffff;
+  --ink: #12211c;
+  --ink-soft: #4b5a53;
+  --primary: #0e5c52;
+  --primary-dark: #0a3f38;
+  --amber: #b8791e;
+  --amber-bg: #fbf0dd;
+  --success: #2e7a54;
+  --success-bg: #e7f3ec;
+  --danger: #a8402e;
+  --danger-bg: #f8e9e6;
+  --border: #e2e5de;
+  --sidebar-width: 232px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14.5px;
+  margin: 0;
+}
+
+h1, h2, h3, .display-font {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.num, table td.num, .kpi-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Shell layout ---------- */
+.shell { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background: var(--primary-dark);
+  color: #dce9e5;
+  padding: 24px 18px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar .brand {
+  font-family: "Fraunces", serif;
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.sidebar .brand-sub {
+  font-size: 12px;
+  color: #9db9b1;
+  margin-bottom: 28px;
+}
+
+.sidebar nav a {
+  display: block;
+  color: #cfe3de;
+  padding: 9px 10px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+.sidebar nav a:hover { background: rgba(255,255,255,0.08); text-decoration: none; }
+.sidebar nav a.active { background: var(--primary); color: #fff; }
+
+.sidebar .role-pill {
+  margin-top: auto;
+  font-size: 12px;
+  color: #9db9b1;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: 14px;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 28px 36px 60px;
+}
+
+.page-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.page-head h1 { font-size: 26px; margin: 0; }
+.page-head p { margin: 4px 0 0; color: var(--ink-soft); font-size: 13.5px; }
+
+/* ---------- KPI strip: hairline-divided, not card-shadow kit ---------- */
+.kpi-strip {
+  display: flex;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 26px;
+}
+.kpi {
+  flex: 1 1 160px;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+}
+.kpi:last-child { border-right: none; }
+.kpi-label { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 6px; }
+.kpi-value { font-family: "Fraunces", serif; font-size: 25px; font-weight: 560; }
+.kpi-value.success { color: var(--success); }
+.kpi-value.amber { color: var(--amber); }
+.kpi-value.danger { color: var(--danger); }
+
+/* ---------- Panels ---------- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.panel h2 { font-size: 16px; margin: 0 0 14px; }
+
+.two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+@media (max-width: 940px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ---------- Tables ---------- */
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+table.data th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 10px;
+  white-space: nowrap;
+}
+table.data td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+table.data tbody tr:hover { background: #fafbf9; }
+table.data td.num, table.data th.num { text-align: right; }
+table.data tfoot td { font-weight: 600; border-top: 2px solid var(--border); border-bottom: none; }
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-SUCCESS { background: var(--success-bg); color: var(--success); }
+.status-PENDING { background: var(--amber-bg); color: var(--amber); }
+.status-FAILED, .status-CANCELLED { background: var(--danger-bg); color: var(--danger); }
+
+/* ---------- Forms & filters ---------- */
+.filter-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+}
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 12px; color: var(--ink-soft); }
+.field input, .field select {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 9px;
+  font-size: 13.5px;
+  font-family: inherit;
+  min-width: 130px;
+  background: #fff;
+  color: var(--ink);
+}
+.field input:focus, .field select:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+  border-color: var(--primary);
+}
+
+form.stacked .field { margin-bottom: 14px; max-width: 420px; }
+form.stacked .field input, form.stacked .field select { width: 100%; }
+
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover { background: var(--primary-dark); border-color: var(--primary-dark); text-decoration: none; color: #fff; }
+.btn.secondary { background: transparent; color: var(--primary); }
+.btn.secondary:hover { background: var(--primary); color: #fff; }
+
+.pagination { display: flex; gap: 8px; margin-top: 16px; font-size: 13.5px; }
+.pagination a, .pagination span { padding: 5px 10px; border: 1px solid var(--border); border-radius: 4px; }
+.pagination a:hover { background: #fafbf9; text-decoration: none; }
+.pagination .current { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.messages { list-style: none; padding: 0; margin: 0 0 18px; }
+.messages li { padding: 10px 14px; border-radius: 5px; margin-bottom: 8px; font-size: 13.5px; background: var(--amber-bg); color: #6a4a10; }
+
+/* ---------- Login page ---------- */
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-dark);
+}
+.login-card {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 360px;
+}
+.login-card h1 { font-size: 24px; margin: 0 0 4px; }
+.login-card p.tagline { color: var(--ink-soft); font-size: 13px; margin: 0 0 26px; }
+
+.empty-state {
+  padding: 30px 10px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}

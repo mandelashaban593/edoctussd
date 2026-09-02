@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} · eDoctorUG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@450;560;650&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">eDoctorUG</div>
+      <div class="brand-sub">Payments Console</div>
+      <nav>
+        <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Overview</a>
+        <a href="{% url 'dashboard:transactions' %}" class="{% if request.resolver_match.url_name == 'transactions' %}active{% endif %}">Transactions</a>
+        <a href="{% url 'dashboard:providers' %}" class="{% if 'provider' in request.resolver_match.url_name %}active{% endif %}">Providers</a>
+        {% if request.user.is_superuser %}
+        <a href="/admin/">Django admin</a>
+        {% endif %}
+      </nav>
+      <div class="role-pill">
+        {{ request.user.get_username }}<br>
+        {% if request.user.is_superuser %}Superuser{% else %}Admin{% endif %}
+        &middot; <a href="{% url 'dashboard:logout' %}" style="color:#cfe3de;">Sign out</a>
+      </div>
+    </aside>
+    <main class="main">
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

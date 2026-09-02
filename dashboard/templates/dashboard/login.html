@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in · eDoctorUG</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@450;560;650&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+</head>
+<body>
+  <div class="login-shell">
+    <div class="login-card">
+      <h1>eDoctorUG</h1>
+      <p class="tagline">Payments console — sign in to continue</p>
+
+      {% if form.errors %}
+        <ul class="messages"><li>Incorrect username or password. Try again.</li></ul>
+      {% endif %}
+
+      <form method="post" class="stacked">
+        {% csrf_token %}
+        <div class="field">
+          <label for="id_username">Username</label>
+          <input type="text" name="username" id="id_username" autofocus required>
+        </div>
+        <div class="field">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" id="id_password" required>
+        </div>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn" style="width:100%;">Sign in</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

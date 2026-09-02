@@ -1,0 +1,116 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Transactions</h1>
+    <p>Filter and reconcile USSD payments. Totals reflect the current filter, not just this page.</p>
+  </div>
+  <a href="{% url 'dashboard:transactions-export' %}?{{ request.GET.urlencode }}" class="btn secondary">Export CSV</a>
+</div>
+
+<form class="filter-bar" method="get">
+  <div class="field">
+    <label for="id_reference">Reference</label>
+    {{ filter.form.reference }}
+  </div>
+  <div class="field">
+    <label for="id_provider">Provider name</label>
+    {{ filter.form.provider }}
+  </div>
+  <div class="field">
+    <label for="id_merchant_code">Merchant code</label>
+    {{ filter.form.merchant_code }}
+  </div>
+  <div class="field">
+    <label for="id_network">Network</label>
+    {{ filter.form.network }}
+  </div>
+  <div class="field">
+    <label for="id_status">Status</label>
+    {{ filter.form.status }}
+  </div>
+  <div class="field">
+    <label for="id_category">Category</label>
+    {{ filter.form.category }}
+  </div>
+  <div class="field">
+    <label for="id_date_from">From date</label>
+    {{ filter.form.date_from }}
+  </div>
+  <div class="field">
+    <label for="id_date_to">To date</label>
+    {{ filter.form.date_to }}
+  </div>
+  <div class="field">
+    <label for="id_min_amount">Min amount</label>
+    {{ filter.form.min_amount }}
+  </div>
+  <div class="field">
+    <label for="id_max_amount">Max amount</label>
+    {{ filter.form.max_amount }}
+  </div>
+  <div class="field">
+    <button class="btn" type="submit">Apply filters</button>
+  </div>
+  {% if request.GET %}
+  <div class="field">
+    <a class="btn secondary" href="{% url 'dashboard:transactions' %}">Clear</a>
+  </div>
+  {% endif %}
+</form>
+
+<div class="panel">
+  {% if transactions %}
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Reference</th><th>Provider</th><th>Category</th><th>Network</th>
+        <th class="num">Amount</th><th class="num">MM fee</th><th class="num">Commission</th>
+        <th class="num">Total</th><th>Status</th><th>Settlement</th><th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in transactions %}
+      <tr>
+        <td>{{ t.payment_external_reference }}</td>
+        <td>{{ t.provider.name }} <span style="color:var(--ink-soft);">({{ t.provider.merchant_code }})</span></td>
+        <td>{{ t.provider.get_category_display }}</td>
+        <td>{{ t.network }}</td>
+        <td class="num">{{ t.amount|floatformat:0 }}</td>
+        <td class="num">{{ t.mm_fee|floatformat:0 }}</td>
+        <td class="num">{{ t.edoctor_commission|floatformat:0 }}</td>
+        <td class="num">{{ t.total_payable|floatformat:0 }}</td>
+        <td><span class="status-badge status-{{ t.status }}">{{ t.status }}</span></td>
+        <td>{{ t.settlement_status }}</td>
+        <td>{{ t.created_at|date:"d M Y, H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">Totals (filtered)</td>
+        <td class="num">{{ totals.total_amount|default:0|floatformat:0 }}</td>
+        <td class="num">{{ totals.total_fees|default:0|floatformat:0 }}</td>
+        <td class="num">{{ totals.total_commission|default:0|floatformat:0 }}</td>
+        <td class="num">{{ totals.total_payable|default:0|floatformat:0 }}</td>
+        <td colspan="3"></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+  </div>
+  {% else %}
+    <div class="empty-state">No transactions match these filters.</div>
+  {% endif %}
+</div>
+{% endblock %}
