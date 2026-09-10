@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from core.models import FeeRule, Network, MerchantType, CommissionType
+from dashboard.models import FeeRule, Network, MerchantType, CommissionType
 
 
 class Command(BaseCommand):

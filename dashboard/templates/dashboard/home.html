@@ -1,0 +1,139 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Overview{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Overview</h1>
+    <p>Live snapshot of USSD payment activity across your providers.</p>
+  </div>
+  <a href="{% url 'dashboard:transactions' %}" class="btn secondary">View all transactions</a>
+</div>
+
+<div class="kpi-strip">
+  <div class="kpi">
+    <div class="kpi-label">Transactions today</div>
+    <div class="kpi-value num">{{ kpi.today_transactions }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Successful</div>
+    <div class="kpi-value num success">{{ kpi.successful_transactions }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Pending</div>
+    <div class="kpi-value num amber">{{ kpi.pending_transactions }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Failed</div>
+    <div class="kpi-value num danger">{{ kpi.failed_transactions }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Gross volume (medicine amount)</div>
+    <div class="kpi-value num">UGX {{ kpi.gross_volume|floatformat:0 }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">eDoctorUG commission</div>
+    <div class="kpi-value num">UGX {{ kpi.edoctor_commission|floatformat:0 }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Active providers</div>
+    <div class="kpi-value num">{{ kpi.active_providers }}</div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="panel">
+    <h2>Successful volume by network</h2>
+    {% if by_network %}
+      <canvas id="networkChart" height="140"></canvas>
+    {% else %}
+      <div class="empty-state">No successful transactions yet.</div>
+    {% endif %}
+  </div>
+  <div class="panel">
+    <h2>Top providers by volume</h2>
+    {% if by_provider %}
+      <canvas id="providerChart" height="140"></canvas>
+    {% else %}
+      <div class="empty-state">No successful transactions yet.</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Recent transactions</h2>
+  {% if recent_transactions %}
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Reference</th><th>Provider</th><th>Network</th>
+        <th class="num">Amount</th><th class="num">Fees</th><th class="num">Total</th>
+        <th>Status</th><th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in recent_transactions %}
+      <tr>
+        <td>{{ t.payment_external_reference }}</td>
+        <td>{{ t.provider.name }}</td>
+        <td>{{ t.network }}</td>
+        <td class="num">{{ t.amount|floatformat:0 }}</td>
+        <td class="num">{{ t.mm_fee|add:t.edoctor_commission|floatformat:0 }}</td>
+        <td class="num">{{ t.total_payable|floatformat:0 }}</td>
+        <td><span class="status-badge status-{{ t.status }}">{{ t.status }}</span></td>
+        <td>{{ t.created_at|date:"d M, H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="empty-state">No transactions recorded yet. Once the USSD callout endpoint receives its first request, activity will show up here.</div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+<script>
+  const tealShades = ['#0e5c52', '#3f8a7e', '#79b0a6', '#b8791e', '#a8402e'];
+
+  {% if by_network %}
+  new Chart(document.getElementById('networkChart'), {
+    type: 'bar',
+    data: {
+      labels: [{% for n in by_network %}'{{ n.network }}',{% endfor %}],
+      datasets: [{
+        label: 'Volume (UGX)',
+        data: [{% for n in by_network %}{{ n.volume|default:0 }},{% endfor %}],
+        backgroundColor: tealShades,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+  {% endif %}
+
+  {% if by_provider %}
+  new Chart(document.getElementById('providerChart'), {
+    type: 'bar',
+    data: {
+      labels: [{% for p in by_provider %}'{{ p.provider__name|truncatechars:16 }}',{% endfor %}],
+      datasets: [{
+        label: 'Volume (UGX)',
+        data: [{% for p in by_provider %}{{ p.volume|default:0 }},{% endfor %}],
+        backgroundColor: '#0e5c52',
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true } }
+    }
+  });
+  {% endif %}
+</script>
+{% endblock %}

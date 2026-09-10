@@ -1,0 +1,86 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Providers{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Providers</h1>
+    <p>Clinics, pharmacies and hospitals registered for USSD payment collection.</p>
+  </div>
+  <a href="{% url 'dashboard:provider-create' %}" class="btn">Add provider</a>
+</div>
+
+<form class="filter-bar" method="get">
+  <div class="field">
+    <label for="id_name">Name</label>
+    {{ filter.form.name }}
+  </div>
+  <div class="field">
+    <label for="id_merchant_code">Merchant code</label>
+    {{ filter.form.merchant_code }}
+  </div>
+  <div class="field">
+    <label for="id_category">Category</label>
+    {{ filter.form.category }}
+  </div>
+  <div class="field">
+    <label for="id_network">Network</label>
+    {{ filter.form.network }}
+  </div>
+  <div class="field">
+    <label for="id_is_active">Active</label>
+    {{ filter.form.is_active }}
+  </div>
+  <div class="field">
+    <button class="btn" type="submit">Apply filters</button>
+  </div>
+  {% if request.GET %}
+  <div class="field"><a class="btn secondary" href="{% url 'dashboard:providers' %}">Clear</a></div>
+  {% endif %}
+</form>
+
+<div class="panel">
+  {% if providers %}
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Merchant code</th><th>Name</th><th>Category</th><th>Mobile number</th>
+        <th>Network</th><th>Merchant type</th><th>Commission</th><th>Status</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in providers %}
+      <tr>
+        <td>{{ p.merchant_code }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.get_category_display }}</td>
+        <td>{{ p.mobile_number }}</td>
+        <td>{{ p.network }}</td>
+        <td>{{ p.get_merchant_type_display }}</td>
+        <td>
+          {% if p.commission_type == "PERCENT" %}{{ p.commission_value }}%{% else %}UGX {{ p.commission_value|floatformat:0 }}{% endif %}
+        </td>
+        <td>
+          {% if p.is_active %}<span class="status-badge status-SUCCESS">Active</span>
+          {% else %}<span class="status-badge status-FAILED">Inactive</span>{% endif %}
+        </td>
+        <td><a href="{% url 'dashboard:provider-edit' p.pk %}">Edit</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+  </div>
+  {% else %}
+    <div class="empty-state">No providers match these filters yet. Add your first clinic, pharmacy or hospital to start collecting payments.</div>
+  {% endif %}
+</div>
+{% endblock %}

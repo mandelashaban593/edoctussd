@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{% if object %}Edit provider{% else %}Add provider{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{% if object %}Edit {{ object.name }}{% else %}Add provider{% endif %}</h1>
+    <p>The merchant code below is what customers enter on the USSD menu after their amount.</p>
+  </div>
+</div>
+
+<div class="panel" style="max-width:480px;">
+  <form method="post" class="stacked">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<small style="color:var(--ink-soft);">{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<small style="color:var(--danger);">{{ error }}</small>{% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn">{% if object %}Save changes{% else %}Add provider{% endif %}</button>
+    <a href="{% url 'dashboard:providers' %}" class="btn secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

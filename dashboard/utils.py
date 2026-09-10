@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 
-from core.models import FeeRule
+from dashboard.models import FeeRule
 
 
 def build_signature_base_string(payload: dict) -> str:
