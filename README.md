@@ -2,14 +2,20 @@
 
 
 
+python manage.py changepassword superadmin
 
 
 Superuser (full Django admin + dashboard, sees every provider/transaction)
 
 username: superadmin
-password: SuperAdmin@2026
+password: simple100
 
-Admin (dashboard-only, scoped to providers they manage)
+Admin (dashboard-only, scoped to p
+Test accounts ready:
+  Superuser   username: superadmin   password: SuperAdmin@2026
+  Admin       username: clinicadmin   password: ClinicAdmin@2026
+
+Providers they manage)
 
 username: clinicadmin
 password: ClinicAdmin@2026

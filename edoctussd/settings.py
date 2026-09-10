@@ -25,8 +25,6 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "rest_framework",
     "django_filters",
-    "core",
-    "ussd",
     "dashboard",
 ]
 

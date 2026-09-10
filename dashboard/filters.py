@@ -1,5 +1,5 @@
 import django_filters as df
-from core.models import Transaction, Provider, Network, TransactionStatus, ProviderCategory
+from dashboard.models import Transaction, Provider, Network, TransactionStatus, ProviderCategory
 
 
 class TransactionFilter(df.FilterSet):

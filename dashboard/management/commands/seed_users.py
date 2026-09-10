@@ -19,7 +19,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
-from core.models import Provider
+from dashboard.models import Provider
 
 User = get_user_model()
 
